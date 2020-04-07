@@ -14,7 +14,7 @@ def get_directories_in_path(path):
     """
     directories = []
     for root, dirs, fnames in os.walk(path):
-        directories.append(root.split("/")[-1])
+        directories.append(os.path.normpath(root).split(os.sep)[-1])
     return set(directories)
 
 
@@ -39,20 +39,22 @@ def get_imports_from_file(path):
     :return: module name
     """
     with open(path) as fh:
-        root = ast.parse(fh.read(), path)
+        try:
+            root = ast.parse(fh.read(), path)
+        except (SyntaxError, UnicodeDecodeError) as e:
+            print("IGNORING file: '{path}' because of error: '{error}'".format(error=e, path=path))
+            # Error in python file, impossible to parse imports
+            return
 
     for node in ast.iter_child_nodes(root):
-        if isinstance(node, ast.Import):
-            module = []
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            module = node.module.split('.')
-        else:
-            continue
-
-        for n in node.names:
-            if len(module) == 1:
-                yield module[0]
+        if isinstance(node, ast.ImportFrom):
+            if node.module:
+                yield node.module.split('.')[0]
             else:
+                # no module found, line probably looks like something like that: `from .. import toto`
+                pass
+        elif isinstance(node, ast.Import):
+            for n in node.names:
                 yield n.name.split('.')[0]
 
 
@@ -62,7 +64,7 @@ def get_imports_from_folder(path):
     :param path: path to use as root
     :return: list of imported modules
     """
-    modules = []
+    modules = set()
     pfd = get_python_files_in_path(path).union(get_directories_in_path(path))
     for root, dirs, fnames in os.walk(path):
         for fname in fnames:
@@ -73,8 +75,8 @@ def get_imports_from_folder(path):
                         if f == module:
                             module = None
                     if module:
-                        modules.append(module)
-    return list(set(modules))
+                        modules.add(module)
+    return list(modules)
 
 
 def test_import_modules(modules):
@@ -91,19 +93,19 @@ def test_import_modules(modules):
     errors = []
     for module in modules:
         try:
-            exec("import {module}".format(module=module))
+            __import__(module)
             success.append(module)
         except ModuleNotFoundError:
             errors.append(module)
 
     requirements = {}
     for k, v in sys.modules.items():
-        package = v.__package__ or ""
-        if len(package) > 0 and package in modules:
-            try:
-                requirements[k] = v.__version__
-            except AttributeError:
-                pass
+        try:
+            package = v.__package__ or ""
+            if len(package) > 0 and package in modules:
+                requirements[package] = v.__version__
+        except AttributeError:
+            pass
 
     return success, errors, requirements
 
@@ -152,4 +154,4 @@ if __name__ == "__main__":
         action="store_true"
     )
     args = arg_parser.parse_args()
-    main(args.path, args.dump_success, args.dump_errors, args.dump_requirements)
+    main(**vars(args))
