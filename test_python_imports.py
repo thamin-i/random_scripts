@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import ast
 import argparse
 
@@ -43,7 +44,7 @@ def get_imports_from_file(path):
     for node in ast.iter_child_nodes(root):
         if isinstance(node, ast.Import):
             module = []
-        elif isinstance(node, ast.ImportFrom):
+        elif isinstance(node, ast.ImportFrom) and node.module:
             module = node.module.split('.')
         else:
             continue
@@ -78,45 +79,77 @@ def get_imports_from_folder(path):
 
 def test_import_modules(modules):
     """
-    Get a list of successfully imported modules and a list of errors
+    Get:
+    - a list of successfully imported modules
+    - a list of unknown modules
+    - a dict of requirements (module => version)
     :param modules: modules that we want to import
-    :return: list of success, list of errors
+    :return: list of success, list of errors, dict of requirements
     """
+
     success = []
     errors = []
     for module in modules:
         try:
             exec("import {module}".format(module=module))
             success.append(module)
-        except Exception:
+        except ModuleNotFoundError:
             errors.append(module)
-    return success, errors
+
+    requirements = {}
+    for k, v in sys.modules.items():
+        package = v.__package__ or ""
+        if len(package) > 0 and package in modules:
+            try:
+                requirements[k] = v.__version__
+            except AttributeError:
+                pass
+
+    return success, errors, requirements
 
 
-def main(path, dump_success):
+def main(path, dump_success, dump_errors, dump_requirements):
     """
-    1 - Get all imported modules
-    2 - Test modules imports
-    3 - Dump success (if 'dump_success') & dump errors
-    :param path: path to use as root
-    :param dump_success: if True => dump successfully imported modules too
+    1 - Get a list of all modules imported in the given project path
+    2 - Try to import those modules
+    3 - dump (if asked for it) success, errors and requirements
+    :param path: path to use as project root
+    :param dump_success: if True => dumping list of successfully imported modules
+    :param dump_errors: if True => dumping list of unsuccessfully imported modules
+    :param dump_requirements: if True => dumping successfully imported modules as requirements (with their versions)
     :return: None
     """
     modules = get_imports_from_folder(path)
-    success, errors = test_import_modules(modules)
+    success, errors, requirements = test_import_modules(modules)
     if dump_success:
-        print("SUCCESS:\n{}\n-----".format(success))
-    print("ERRORS:\n{}\n".format(errors))
+        print("\nSUCCESS:\n{}\n\n-----".format(success))
+    if dump_errors:
+        print("\nERRORS:\n{}\n\n-----".format(errors))
+    if dump_requirements:
+        str = "\nREQUIREMENTS:\n"
+        for requirement, version in requirements.items():
+            str += "{requirement}=={version}\n".format(requirement=requirement, version=version)
+        str += "\n-----\n"
+        print(str)
 
 
 if __name__ == "__main__":
-    # Parse command line arguments
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("path", help="Path to the project directory you want to check")
     arg_parser.add_argument(
+        '--dump-errors',
+        help="Dump list of unsuccessfully imported modules",
+        action="store_true"
+    )
+    arg_parser.add_argument(
         '--dump-success',
-        help="Dump successfully imported modules too",
+        help="Dump list of successfully imported modules",
+        action="store_true"
+    )
+    arg_parser.add_argument(
+        '--dump-requirements',
+        help="Dump successfully imported modules and their version (as in requirements files)",
         action="store_true"
     )
     args = arg_parser.parse_args()
-    main(args.path, args.dump_success)
+    main(args.path, args.dump_success, args.dump_errors, args.dump_requirements)
