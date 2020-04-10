@@ -1,0 +1,50 @@
+#! /usr/bin/env bash
+
+xrunning=$(docker ps -q | wc -l)
+xstopped=$(docker ps -aq --filter status=exited | wc -l)
+running=$(docker ps --format '{{.Names}}')
+stopped=$(docker ps --format '{{.Names}}' --filter "status=exited")
+
+STOP="\e[0m"
+RED="\e[31m"
+GREEN="\e[32m"
+BLUE="\e[34m"
+
+_print_containers_stats() {
+containers="$1"
+color="$2"
+
+for container in $containers
+do
+    status=$(docker ps -aq --format "{{.Status}}" --filter "name=$container" | head -n 1)
+    status=${status%%endstatus}
+    printf "# %20s |" "$container"
+    count=0
+    for s in $status
+    do
+        if [[ $count -eq 0 ]]; then
+            printf " ${color}$s${STOP}"
+        else
+            printf " $s"
+        fi
+        ((count++))
+    done
+    printf "\n"
+done
+}
+
+printf "\n"
+printf "################\n"
+printf "# ${BLUE}DOCKER STATS:${STOP}\n"
+printf "#\n"
+printf "# #############################\n"
+printf "# %-20s ${GREEN}%-5s${STOP} #\n" "# Running containers:" "${xrunning}"
+printf "# %-20s ${RED}%-5s${STOP} #\n" "# Stopped containers:" "${xstopped}"
+printf "# #############################\n"
+printf "#\n"
+
+_print_containers_stats "$running" "$GREEN"
+_print_containers_stats "$stopped" "$RED"
+
+printf "#\n"
+printf "################\n"

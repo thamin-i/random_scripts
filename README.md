@@ -1,13 +1,16 @@
 ### Summary
 - [introduction](#INTRODUCTION)
 - [test_python_imports](#TEST_PYTHON_IMPORTS)
+- [20-docker-stats](#20_DOCKER_STATS)
 ____
+
 ### INTRODUCTION
 _This repository contains various homemade scripts_
 ____
+
 ### TEST_PYTHON_IMPORTS
-_This script is useful in big python projects when you want to check that all your imported modules are available in your environment_  
-- You can access the help by launching `python test_python_imports.py --help`:  
+_This script is useful in big python projects when you want to check that all your imported modules are available in your environment_
+- You can access the help by launching `python test_python_imports.py --help`:
 ```shell script
 usage: test_python_imports.py [-h] [--dump-errors] [--dump-success] [--dump-requirements] path
 
@@ -20,7 +23,7 @@ optional arguments:
   --dump-success       Dump list of successfully imported modules
   --dump-requirements  Dump successfully imported modules and their version (as in requirements files)
 ```
-- An example of use could be:  
+- An example of use could be:
 ```shell script
 $>python test_python_imports.py "/tmp/random_scripts" --dump-requirements
 
@@ -29,3 +32,19 @@ click==7.1.1
 werkzeug==1.0.1
 ```
 ____
+
+### 20_DOCKER_STATS
+_this scripts add a docker stats paragraph to the MOTD of your UNIX system_
+- You can test it with:
+```shell script
+bash 20-docker-stats
+```
+- If you want to add it to your MOTD:
+
+```shell script
+# Check you don't already have a file name `20-***` in `/etc/update-motd.d/`
+ls -la /etc/update-motd.d/
+
+# Add the bash script to your system MOTD folder
+sudo cp ./20-docker-stats /etc/update-motd.d/
+```
