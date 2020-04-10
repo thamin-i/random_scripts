@@ -46,11 +46,11 @@ _print_docker_motd() {
 }
 
 docker_status=$(systemctl show --property ActiveState docker)
+username=$USER
+user_allowed="false"
 
 if getent group docker | grep -q "\b${username}\b"; then
   user_allowed="true"
-else
-  user_allowed="false"
 fi
 
 if [ "$docker_status" == "ActiveState=active" ]; then
@@ -63,4 +63,3 @@ else
   printf "(dockerd service is not running, bypassing docker MOTD)\n"
 fi
 
-username=$USER
