@@ -1,46 +1,66 @@
 #! /usr/bin/env bash
 
-xrunning=$(docker ps -q | wc -l)
-xstopped=$(docker ps -aq --filter status=exited | wc -l)
-running=$(docker ps --format '{{.Names}}')
-stopped=$(docker ps --format '{{.Names}}' --filter "status=exited")
-
-STOP="\e[0m"
-RED="\e[31m"
-GREEN="\e[32m"
-BLUE="\e[34m"
-
 _print_containers_stats() {
-containers="$1"
-color="$2"
+  containers="$1"
+  color="$2"
 
-for container in $containers
-do
+  for container in $containers; do
     status=$(docker ps -aq --format "{{.Status}}" --filter "name=$container" | head -n 1)
     status=${status%%endstatus}
     printf "# %20s |" "$container"
     count=0
-    for s in $status
-    do
-        if [[ $count -eq 0 ]]; then
-            printf " ${color}$s${STOP}"
-        else
-            printf " $s"
-        fi
-        ((count++))
+    for s in $status; do
+      if [[ $count -eq 0 ]]; then
+        printf " ${color}$s${STOP}"
+      else
+        printf " $s"
+      fi
+      ((count++))
     done
     printf "\n"
-done
+  done
 }
 
-printf "%s\n" "" "################"
-printf "# ${BLUE}DOCKER STATS:${STOP}\n"
-printf "# %s\n" "" "#############################"
-printf "# %-20s ${GREEN}%-5s${STOP} #\n" "# Running containers:" "${xrunning}"
-printf "# %-20s ${RED}%-5s${STOP} #\n" "# Stopped containers:" "${xstopped}"
-printf "# %s\n" "#############################" ""
+_print_docker_motd() {
+  xrunning=$(docker ps -q | wc -l)
+  xstopped=$(docker ps -aq --filter status=exited | wc -l)
+  running=$(docker ps --format '{{.Names}}')
+  stopped=$(docker ps --format '{{.Names}}' --filter "status=exited")
 
-_print_containers_stats "$running" "$GREEN"
-_print_containers_stats "$stopped" "$RED"
+  STOP="\e[0m"
+  RED="\e[31m"
+  GREEN="\e[32m"
+  BLUE="\e[34m"
 
-printf "#%s\n" "################"
+  printf "%s\n" "" "################"
+  printf "# ${BLUE}DOCKER STATS:${STOP}\n"
+  printf "# %s\n" "" "#############################"
+  printf "# %-20s ${GREEN}%-5s${STOP} #\n" "# Running containers:" "${xrunning}"
+  printf "# %-20s ${RED}%-5s${STOP} #\n" "# Stopped containers:" "${xstopped}"
+  printf "# %s\n" "#############################" ""
+
+  _print_containers_stats "$running" "$GREEN"
+  _print_containers_stats "$stopped" "$RED"
+
+  printf "#%s\n" "################"
+}
+
+docker_status=$(systemctl show --property ActiveState docker)
+
+if getent group docker | grep -q "\b${username}\b"; then
+  user_allowed="true"
+else
+  user_allowed="false"
+fi
+
+if [ "$docker_status" == "ActiveState=active" ]; then
+  if [ "$user_allowed" == "true" ]; then
+    _print_docker_motd
+  else
+    printf "(current user is not in docker group, bypassing docker MOTD)\n"
+  fi
+else
+  printf "(dockerd service is not running, bypassing docker MOTD)\n"
+fi
+
+username=$USER
