@@ -33,18 +33,14 @@ do
 done
 }
 
-printf "\n"
-printf "################\n"
+printf "%s\n" "" "################"
 printf "# ${BLUE}DOCKER STATS:${STOP}\n"
-printf "#\n"
-printf "# #############################\n"
+printf "# %s\n" "" "#############################"
 printf "# %-20s ${GREEN}%-5s${STOP} #\n" "# Running containers:" "${xrunning}"
 printf "# %-20s ${RED}%-5s${STOP} #\n" "# Stopped containers:" "${xstopped}"
-printf "# #############################\n"
-printf "#\n"
+printf "# %s\n" "#############################" ""
 
 _print_containers_stats "$running" "$GREEN"
 _print_containers_stats "$stopped" "$RED"
 
-printf "#\n"
-printf "################\n"
+printf "#%s\n" "################"
