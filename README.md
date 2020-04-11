@@ -24,14 +24,8 @@ optional arguments:
   --dump-success       Dump list of successfully imported modules
   --dump-requirements  Dump successfully imported modules and their version (as in requirements files)
 ```
-- An example of use could be:
-```shell script
-$>python test_python_imports.py "/tmp/random_scripts" --dump-requirements
-
-REQUIREMENTS:
-click==7.1.1
-werkzeug==1.0.1
-```
+- Here is a basic example of output:
+![alt text](static/test_python_imports.png)
 ____
 
 ### 20_DOCKER_STATS
@@ -49,6 +43,8 @@ ls -la /etc/update-motd.d/
 # Add the bash script to your system MOTD folder
 sudo cp ./20-docker-stats /etc/update-motd.d/
 ```
+- Here is a basic example of output:
+![alt text](static/20_docker_stats.png)
 ____
 
 ### RENAME
