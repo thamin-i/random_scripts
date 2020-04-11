@@ -63,8 +63,6 @@ order_type	Sorting type to use, can be 'date' or 'size'
 optional arguments:
 path		path to the directory to use (default is ".")
 ```
-- You can test it with:
-```shell script
-bash rename.sh size
-bash rename.sh date
-```
+- Here is a basic example of use:
+![alt text](static/rename_sh.png)
+

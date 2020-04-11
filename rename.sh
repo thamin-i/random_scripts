@@ -47,6 +47,8 @@ elif [ -z "${path}" ]; then
   path="."
 fi
 
+cd "$path" || exit 1
+
 case "$order_type" in
 "date")
   files=$(get_ordered_file_names_by_date)
@@ -60,5 +62,4 @@ case "$order_type" in
   ;;
 esac
 
-cd "$path" || exit 1
 rename_ordered_file_names "$files"
