@@ -2,6 +2,7 @@
 - [introduction](#INTRODUCTION)
 - [test_python_imports](#TEST_PYTHON_IMPORTS)
 - [20-docker-stats](#20_DOCKER_STATS)
+- [rename](#RENAME)
 ____
 
 ### INTRODUCTION
@@ -47,4 +48,23 @@ ls -la /etc/update-motd.d/
 
 # Add the bash script to your system MOTD folder
 sudo cp ./20-docker-stats /etc/update-motd.d/
+```
+____
+
+### RENAME
+_this scripts renames all files in a directory by sorting them (by date or size) and adding a counter in front on them_
+- You can access the help by launching `bash rename.sh`:
+```shell script
+usage: rename.sh order_type <path>
+
+positional arguments:
+order_type	Sorting type to use, can be 'date' or 'size'
+
+optional arguments:
+path		path to the directory to use (default is ".")
+```
+- You can test it with:
+```shell script
+bash rename.sh size
+bash rename.sh date
 ```
