@@ -3,6 +3,7 @@
 - [test_python_imports](#TEST_PYTHON_IMPORTS)
 - [20-docker-stats](#20_DOCKER_STATS)
 - [rename](#RENAME)
+- [progress_bar](#PROGRESS_BAR)
 ____
 
 ### INTRODUCTION
@@ -61,4 +62,20 @@ path		path to the directory to use (default is ".")
 ```
 - Here is a basic example of use:
 ![alt text](static/rename_sh.png)
+____
 
+### PROGRESS_BAR
+_this scripts runs a given command in background and displays a progressbar during its execution (based on the execution time)_
+- You can access the help by launching `bash progress_bar.sh`:
+```shell script
+USAGE:
+	bash progress_bar.sh [progress_bar_size] [expected_duration] [command]
+EXAMPLE:
+	bash progress_bar.sh 100 10 sleep 10
+PARAMETERS:
+	[progress_bar_size]	Size of the displayed progress bar (cannot be 0)
+	[expected_duration]	Expected command duration in seconds (cannot be 0)
+	[command]		Command to run in background
+```
+- Here is a basic example of use:
+![alt text](static/progress_bar_sh.png)
