@@ -34,7 +34,7 @@ _display_progress_bar() {
 _exec_in_background() {
     echo "Launching command '$command' in background"
     SECONDS=0
-    eval $command &
+    eval $command > /dev/null 2>&1 &
     pid=$!
     trap "kill $pid 2> /dev/null" EXIT
     while kill -0 $pid 2>/dev/null; do
