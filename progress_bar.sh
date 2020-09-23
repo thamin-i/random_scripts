@@ -59,4 +59,4 @@ if [ -z "${progress_bar_size}" ] ||  [ -z "${expected_duration}" ] || [ -z "${co
     exit 1
 fi
 
-_exec_in_background $command
+_exec_in_background
