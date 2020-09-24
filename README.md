@@ -3,7 +3,8 @@
 - [test_python_imports](#TEST_PYTHON_IMPORTS)
 - [20-docker-stats](#20_DOCKER_STATS)
 - [rename](#RENAME)
-- [progress_bar](#PROGRESS_BAR)
+- [exec_task_in_bg](#EXEC_TASK_IN_BG)
+- [exec_tasks_in_bg](#EXEC_TASKS_IN_BG)
 ____
 
 ### INTRODUCTION
@@ -64,18 +65,34 @@ path		path to the directory to use (default is ".")
 ![alt text](static/rename_sh.png)
 ____
 
-### PROGRESS_BAR
+### EXEC_TASK_IN_BG
 _this scripts runs a given command in background and displays a progressbar during its execution (based on the execution time)_
-- You can access the help by launching `bash progress_bar.sh`:
+- You can access the help by launching `bash exec_task_in_bg.sh`:
 ```shell script
 USAGE:
-	bash progress_bar.sh [progress_bar_size] [expected_duration] [command]
+	bash exec_task_in_bg.sh [progress_bar_size] [expected_duration] [command]
 EXAMPLE:
-	bash progress_bar.sh 100 10 sleep 10
+	bash exec_task_in_bg.sh 100 10 sleep 10
 PARAMETERS:
 	[progress_bar_size]	Size of the displayed progress bar (cannot be 0)
 	[expected_duration]	Expected command duration in seconds (cannot be 0)
 	[command]		Command to run in background
 ```
 - Here is a basic example of use:
-![alt text](static/progress_bar_sh.png)
+![alt text](static/exec_task_in_bg_sh.png)
+____
+
+### EXEC_TASKS_IN_BG
+_this scripts runs a given list of commands in background and displays a progressbar during their execution_
+- You can access the help by launching `bash exec_tasks_in_bg.sh`:
+```shell script
+USAGE:
+	bash exec_tasks_in_bg.sh [progress_bar_size] [tasks]
+EXAMPLE:
+	bash exec_tasks_in_bg.sh 100 'sleep 1' 'sleep 2' 'exit 1' 'sleep3'
+PARAMETERS:
+	[progress_bar_size]	Size of the displayed progress bar (cannot be 0)
+	[tasks]		Commands to run in the background
+```
+- Here is a basic example of use:
+![alt text](static/exec_tasks_in_bg_sh.gif)
