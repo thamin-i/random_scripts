@@ -11,11 +11,10 @@ _abort() {
 _display_help() {
     printf "This script executes an ordered list of command in the background and display a progress bar during the execution\n"
     printf "USAGE:\n"
-    printf "\tbash ${name} [progress_bar_size] [tasks]\n"
+    printf "\tbash ${name} [tasks]\n"
     printf "EXAMPLE:"
-    printf "\n\tbash ${name} 100 'sleep 1' 'sleep 2' 'exit 1' 'sleep3'\n"
+    printf "\n\tbash ${name} 'sleep 1' 'sleep 2' 'exit 1' 'sleep3'\n"
     printf "PARAMETERS:\n"
-    printf "\t[progress_bar_size]\tSize of the displayed progress bar (cannot be 0)\n"
     printf "\t[tasks]\t\tCommands to run in the background\n"
 }
 
@@ -24,7 +23,13 @@ _display_progress_bar() {
     progress=${percentage%%.*}
     progress_bar="\r["
     for (( i=1; i<=$progress_bar_size; i++ )); do
-        if ((progress / (100 / $progress_bar_size) >= i)); then
+
+        # The next 4 lines are here to avoid a division by 0
+        divider=$((100 / $progress_bar_size))
+        if ((divider == 0)); then
+            divider=1
+        fi
+        if ((progress / divider >= i)); then
             progress_bar+="${color}#\e[0m"
         else
             progress_bar+="."
@@ -54,20 +59,19 @@ _exec_in_background() {
     _display_progress_bar
 }
 
-current_task=0
-color="\e[32m"
 name="${0}"
-progress_bar_size="${1}"
-shift
 tasks=( "${@}" )
 tasks_number="${#tasks[@]}"
-
-if [ -z "${progress_bar_size}" ] || ((progress_bar_size == 0)) || ((tasks_number == 0)); then
-    _display_help
-    exit 1
-fi
-
 _setup
+current_task=0
+color="\e[32m"
+progress_bar_size=$((COLUMNS / 2))
+
+if ((progress_bar_size == 0)) || ((tasks_number == 0)); then
+    _display_help
+    status_code=1
+    _abort
+fi
 
 for task in "${tasks[@]}"; do
     _exec_in_background

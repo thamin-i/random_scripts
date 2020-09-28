@@ -1,10 +1,13 @@
 ### Summary
-- [introduction](#INTRODUCTION)
-- [test_python_imports](#TEST_PYTHON_IMPORTS)
-- [20-docker-stats](#20_DOCKER_STATS)
-- [rename](#RENAME)
-- [exec_task_in_bg](#EXEC_TASK_IN_BG)
-- [exec_tasks_in_bg](#EXEC_TASKS_IN_BG)
+- [Summary](#summary)
+- [INTRODUCTION](#introduction)
+- [TEST_PYTHON_IMPORTS](#test_python_imports)
+- [20_DOCKER_STATS](#20_docker_stats)
+- [RENAME](#rename)
+- [EXEC_TASK_IN_BG](#exec_task_in_bg)
+- [EXEC_TASKS_IN_BG](#exec_tasks_in_bg)
+- [ANIMATE_ASCII](#animate_ascii)
+- [RANDOM_MOUSE](#random_mouse)
 ____
 
 ### INTRODUCTION
@@ -96,3 +99,32 @@ PARAMETERS:
 ```
 - Here is a basic example of use:
 ![alt text](static/exec_tasks_in_bg_sh.gif)
+____
+
+### ANIMATE_ASCII
+_this scripts animates one or many ascii arts from the top of the terminal to the bottom of the terminal_
+- You can access the help by launching `bash animate_ascii.sh`:
+```shell script
+USAGE:
+	bash animate_ascii.sh [name]
+EXAMPLE:
+	bash animate_ascii.sh 'asciiArts'
+PARAMETERS:
+	[name]		File or directory containing the ascii art(s)
+```
+- Here is a basic example of use:
+![alt text](static/animate_ascii_sh.gif)
+____
+
+### RANDOM_MOUSE
+_this scripts randomly moves the mouse on the screen_
+- You can access the help by launching `bash random_mouse.sh`:
+```shell script
+USAGE:
+	bash random_mouse.sh [min_sleep] [max sleep]
+EXAMPLE:
+	bash random_mouse.sh 1 3600
+PARAMETERS:
+	[min_sleep]	Minimal sleep time between random moves (in seconds)
+	[max_sleep]	Maximal sleep time between random moves (in seconds)
+```
