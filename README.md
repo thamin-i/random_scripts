@@ -8,6 +8,7 @@
 - [EXEC_TASKS_IN_BG](#exec_tasks_in_bg)
 - [ANIMATE_ASCII](#animate_ascii)
 - [RANDOM_MOUSE](#random_mouse)
+- [LIST_TODOS](#list_todos)
 ____
 
 ### INTRODUCTION
@@ -128,3 +129,10 @@ PARAMETERS:
 	[min_sleep]	Minimal sleep time between random moves (in seconds)
 	[max_sleep]	Maximal sleep time between random moves (in seconds)
 ```
+____
+
+### LIST_TODOS
+_this scripts list todos from the oldest to the newest in a given repository_
+- You can use it by launching `bash list_todos.sh PATH_TO_YOUR_REPO`
+- Here is a basic example of output:
+![alt text](static/list_todos.png)
